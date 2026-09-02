@@ -4,9 +4,17 @@ Account ABC, $100K: IBM must be bought up from 10% to 20% ($10,000 at $150
 buys 66 whole shares) and ORCL sold down from 30% to 20% ($10,000 at $220
 sells 45 whole shares); the rest are already on target.
 """
+import allure
+
 from rebalancer import TradeInstruction, rebalance
 
+pytestmark = [
+    allure.feature("Happy path"),
+    allure.severity(allure.severity_level.BLOCKER),
+]
 
+
+@allure.title("TC-01: sample account ABC produces the expected instruction list")
 def test_tc01_sample_account_abc(sample_account):
     assert rebalance(sample_account) == [
         TradeInstruction("IBM", "BUY", 66),
@@ -17,6 +25,7 @@ def test_tc01_sample_account_abc(sample_account):
     ]
 
 
+@allure.title("TC-01: output preserves the input security order")
 def test_tc01_output_preserves_input_order(sample_account):
     symbols = [trade.symbol for trade in rebalance(sample_account)]
     assert symbols == ["IBM", "MSFT", "ORCL", "AAPL", "HD"]

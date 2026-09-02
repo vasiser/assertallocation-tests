@@ -1,5 +1,8 @@
 # Portfolio Rebalancer — QA Technical Assessment
 
+<!-- Replace <OWNER> with the GitHub account name once the repo is pushed -->
+![CI](https://github.com/<OWNER>/assertallocation-tests/actions/workflows/ci.yml/badge.svg)
+
 Manual and automated test cases for a portfolio **rebalancing application**, plus a small reference implementation used as the system under test.
 
 ## The problem
@@ -29,13 +32,13 @@ With whole shares, *exactly* zero variance is unreachable: after trading, IBM re
 | `src/rebalancer/` | Reference implementation (system under test): `models.py` dataclasses, `rebalance.py` calculation + input validation, `__main__.py` demo |
 | `docs/manual_test_cases.md` | **Deliverable 1:** manual test case catalog — 21 cases (TC-01 … TC-20b) covering happy path, boundary/rounding, and validation |
 | `docs/assumptions.md` | Explicit assumptions + open questions for discussion |
-| `tests/` | **Deliverable 2:** automated pytest suite (34 tests) |
+| `tests/` | **Deliverable 2:** automated pytest suite (35 tests) |
 
 ## Running
 
 ```powershell
-pip install -r requirements.txt   # just pytest
-python -m pytest -v               # run all 34 tests
+pip install -r requirements.txt   # pytest + allure-pytest
+python -m pytest -v               # run all 35 tests
 ```
 
 Demo (prints the ABC account result table):
@@ -43,6 +46,21 @@ Demo (prints the ABC account result table):
 ```powershell
 $env:PYTHONPATH = "src"; python -m rebalancer
 ```
+
+## Allure report
+
+Test results can be exported in [Allure](https://allurereport.org/) format, where the suite appears grouped by the manual catalog's categories (Happy path / Boundary & rounding / Validation / Invariants) with severities and TC-ID titles:
+
+```powershell
+python -m pytest --alluredir=allure-results --clean-alluredir
+allure serve allure-results       # generates the report and opens it in the browser
+```
+
+Viewing requires the Allure CLI (`scoop install allure`; needs Java, e.g. `scoop install temurin-lts-jdk` — or via Node: `npm install -g allure-commandline`). The CLI is only needed for *viewing*: generating `allure-results` works with just `allure-pytest` from requirements.txt.
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the full suite on Python 3.12 for every push and pull request to `main`. Each run uploads its Allure results as an `allure-results` build artifact (kept 14 days) — download it from the run's page in the Actions tab, unzip, and view with `allure serve <folder>`. The artifact is uploaded even when tests fail, which is when the report matters most.
 
 ## Test design
 

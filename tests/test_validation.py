@@ -2,10 +2,16 @@
 
 Each pytest.param id matches a case in docs/manual_test_cases.md.
 """
+import allure
 import pytest
 
 from rebalancer import rebalance
 from conftest import make_account
+
+pytestmark = [
+    allure.feature("Validation"),
+    allure.severity(allure.severity_level.NORMAL),
+]
 
 VALID_FILLER = [("C", 20, 20, 50), ("D", 20, 20, 60), ("E", 20, 20, 70)]
 
@@ -68,7 +74,8 @@ CASES = [
 
 
 @pytest.mark.parametrize("holdings_spec, total_assets, error_match", CASES)
-def test_invalid_input_rejected(holdings_spec, total_assets, error_match):
+def test_invalid_input_rejected(holdings_spec, total_assets, error_match, request):
+    allure.dynamic.title(request.node.callspec.id)
     account = make_account(holdings_spec, total_assets=total_assets)
     with pytest.raises(ValueError, match=error_match):
         rebalance(account)

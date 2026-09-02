@@ -12,10 +12,16 @@ specific expected numbers asserted in the case tests:
 """
 from decimal import Decimal
 
+import allure
 import pytest
 
 from rebalancer import rebalance
 from conftest import SAMPLE_ROWS, make_account
+
+pytestmark = [
+    allure.feature("Invariants (automation-only)"),
+    allure.severity(allure.severity_level.CRITICAL),
+]
 
 ACCOUNTS = [
     pytest.param(make_account(SAMPLE_ROWS, "100000", "ABC"), id="sample-abc"),
@@ -39,7 +45,8 @@ ACCOUNTS = [
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_trades_never_overshoot_and_land_within_one_share(account):
+def test_trades_never_overshoot_and_land_within_one_share(account, request):
+    allure.dynamic.title(f"Never overshoot, land within one share: {request.node.callspec.id}")
     for holding, trade in zip(account.holdings, rebalance(account)):
         variance_value = (
             abs(holding.current_pct - holding.target_pct) / 100 * account.total_assets
@@ -52,7 +59,8 @@ def test_trades_never_overshoot_and_land_within_one_share(account):
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_action_matches_variance_sign(account):
+def test_action_matches_variance_sign(account, request):
+    allure.dynamic.title(f"Action matches variance sign: {request.node.callspec.id}")
     for holding, trade in zip(account.holdings, rebalance(account)):
         variance = holding.current_pct - holding.target_pct
         assert trade.shares >= 0
@@ -64,6 +72,8 @@ def test_action_matches_variance_sign(account):
             assert trade.action == "HOLD" and trade.shares == 0
 
 
+@allure.title("Sample account ABC is cash neutral ($9,900 bought = $9,900 sold)")
+@allure.severity(allure.severity_level.NORMAL)
 def test_sample_account_is_cash_neutral(sample_account):
     """Specific fact about account ABC, not a general invariant: buys and
     sells floor independently, but here both round to exactly $9,900."""
