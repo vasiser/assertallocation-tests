@@ -1,0 +1,12 @@
+[project]
+name = "rebalancer"
+version = "0.1.0"
+description = "Portfolio rebalancing calculator with manual and automated test suites (QA technical assessment)"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
