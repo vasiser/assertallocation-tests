@@ -60,7 +60,7 @@ Viewing requires the Allure CLI (`scoop install allure`; needs Java, e.g. `scoop
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs the full suite on Python 3.12 for every push and pull request to `main`. Each run uploads its Allure results as an `allure-results` build artifact (kept 14 days) — download it from the run's page in the Actions tab, unzip, and view with `allure serve <folder>`. The artifact is uploaded even when tests fail, which is when the report matters most.
+GitHub Actions (`.github/workflows/ci.yml`) runs the full suite on Python 3.12 for every push and pull request to `main`; it can also be triggered manually via **Actions → CI → Run workflow**. Each run uploads its Allure results as an `allure-results` build artifact (kept 14 days) — download it from the run's page in the Actions tab, unzip, and view with `allure serve <folder>`. The artifact is uploaded even when tests fail, which is when the report matters most.
 
 ## Test design
 
