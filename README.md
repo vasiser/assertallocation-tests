@@ -55,7 +55,7 @@ python -m pytest --alluredir=allure-results --clean-alluredir
 allure serve allure-results       # generates the report and opens it in the browser
 ```
 
-Viewing requires the Allure CLI (`scoop install allure`; needs Java, e.g. `scoop install temurin-lts-jdk` — or via Node: `npm install -g allure-commandline`). The CLI is only needed for *viewing*: generating `allure-results` works with just `allure-pytest` from requirements.txt.
+Viewing requires the Allure CLI, which needs a Java runtime: install it with `scoop install allure` plus `scoop install temurin-lts-jdk`, or with `npm install -g allure-commandline`. The CLI is only needed for *viewing*: generating `allure-results` works with just `allure-pytest` from requirements.txt.
 
 ## CI
 
@@ -71,7 +71,7 @@ The manual catalog lives in **[docs/manual_test_cases.md](docs/manual_test_cases
 | Boundary / rounding | TC-05 … TC-14 | Sub-share variances, one-cent-short values, penny prices, liquidations, new positions, degenerate accounts |
 | Validation | TC-15 … TC-23 | Percentage sums, non-positive prices, negative values, duplicates, empty accounts |
 
-Every case is also automated: the catalog's `Automated` column names the pytest ID that verifies it (e.g. catalog row TC-05 ↔ pytest `TC-05-sub-share-variance` ↔ the same title in the Allure report), so manual and automated coverage never drift apart. The reasoning behind expected results is captured in [docs/assumptions.md](docs/assumptions.md).
+Every case is also automated: the catalog's `Automated` column gives the prefix of the pytest ID that verifies it (e.g. catalog row TC-05 ↔ pytest `TC-05-sub-share-variance` ↔ the same title in the Allure report), so manual and automated coverage stay in step. The reasoning behind expected results is captured in [docs/assumptions.md](docs/assumptions.md).
 
 ## Test design
 
@@ -80,6 +80,6 @@ Every case is also automated: the catalog's `Automated` column names the pytest 
 - **`tests/test_validation.py`** — invalid inputs (percentages not summing to 100, non-positive prices, duplicates, empty account, negative values) are rejected with descriptive errors.
 - **`tests/test_invariants.py`** — property-style rules checked across representative accounts: trades never overshoot the target, the residual is always smaller than one share's value, and actions always match the variance sign. The sample account's cash neutrality ($9,900 bought = $9,900 sold) is asserted as a specific fact — floor-rounding does not guarantee it in general.
 
-Money and percentages use Python `Decimal` throughout: 0.1 has no exact binary representation, and TC-08 demonstrates a case where float arithmetic would produce 99 shares instead of the correct 100.
+Money and percentages use Python `Decimal` throughout: 0.1 has no exact binary representation, and TC-08 demonstrates a case where float arithmetic (0.3 / 0.1 = 2.999…) would produce 2 shares instead of the correct 3.
 
-**With more time:** property-based testing with [hypothesis](https://hypothesis.readthedocs.io/) — generate random valid accounts and check the invariants above hold universally; and an upstream adapter deriving current % from held share counts × prices.
+**With more time:** property-based testing — generate random valid accounts and check that the invariants above hold universally; and an upstream adapter deriving current % from held share counts × prices.

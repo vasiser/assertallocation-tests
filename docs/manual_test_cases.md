@@ -25,7 +25,7 @@
 | TC-05 | Variance smaller than one unit price | Boundary/rounding | $100,000; trade value $100 < price $450 | A 20.1/20 @450 · B 19.9/20 @450 · C, D, E 20/20 | A HOLD 0 and B HOLD 0 despite non-zero variance — cannot fund/deliver a whole share; C–E HOLD 0 | ✔ `TC-05` |
 | TC-06 | Trade value exactly one unit price | Boundary/rounding | $100,000; trade value $450 = price $450 | A 20.45/20 @450 · B 19.55/20 @450 · C, D, E 20/20 | A **BUY 1** · B **SELL 1** — the minimum tradable boundary | ✔ `TC-06` |
 | TC-07 | Trade value one cent short of the next share | Boundary/rounding | $89,999 total; 1% variance = $899.99, price $90 | A 19/20 @90 · B 21/20 @90 · C, D, E 20/20 | A **SELL 9** and B **BUY 9** ($899.99/90 = 9.99988… → 9, never 10) — round toward zero, no overshoot | ✔ `TC-07` |
-| TC-08 | Penny-precision price (decimal arithmetic) | Boundary/rounding | $1,000 total; price $0.10; trade value $10.00 | A 19/20 @0.10 · B 21/20 @0.10 · C, D, E 20/20 | A **SELL 100** and B **BUY 100** — exactly 100, not 99 (binary floating point computes 10/0.1 = 99.999…; the app must use exact decimal arithmetic) | ✔ `TC-08` |
+| TC-08 | Penny-precision price (decimal arithmetic) | Boundary/rounding | $30 total; price $0.10; trade value $0.30 | A 19/20 @0.10 · B 21/20 @0.10 · C, D, E 20/20 | A **SELL 3** and B **BUY 3** — exactly 3, not 2 (binary floating point computes 0.3/0.1 = 2.999…, which truncates to 2; the app must use exact decimal arithmetic) | ✔ `TC-08` |
 | TC-09 | Target 0% — full liquidation | Boundary/rounding | $100,000; one security must be exited | A 0/25 @40 · B 40/15 @300 · C 30/30 · D 30/30 | A **SELL 625** ($25,000/40 exact — position fully exited) · B **BUY 83** ($25,000/300 → 83.33) · C, D HOLD 0 | ✔ `TC-09` |
 | TC-10 | New security — current 0%, target > 0% | Boundary/rounding | $100,000; one security not yet held | A 25/0 @125 · B 25/50 @500 · C 25/25 · D 25/25 | A **BUY 200** ($25,000/125 exact — new position opened) · B **SELL 50** · C, D HOLD 0 | ✔ `TC-10` |
 | TC-11 | Total assets smaller than any unit price | Boundary/rounding | $50 total; all prices > any trade value | A 10/20 @100 · B 30/20 @60 · C 30/30 · D 30/30 | All HOLD 0 — every variance value ($5) is below one share's price | ✔ `TC-11` |
@@ -42,6 +42,6 @@
 | TC-22 | Negative target percentage | Validation | — | Sample account, but IBM target = −20 | Rejected: error states the target percentage cannot be negative | ✔ `TC-22` |
 | TC-23 | Negative current percentage | Validation | — | Sample account, but IBM current = −20 | Rejected: error states the current percentage cannot be negative | ✔ `TC-23` |
 
-**Notation:** `A 20/10 @150` = security A, target 20%, current 10%, unit price $150.
+**Notation:** `A 20/10 @150` = security A, target 20%, current 10%, unit price $150. Filler securities listed without a price (e.g. `C, D, E 20/20`) have no variance, so any positive price may be used; the automated tests use $50, $60, and $70.
 
 **Traceability:** the `Automated` column gives the pytest test ID prefix; run `python -m pytest -v` and match IDs (e.g. `TC-05-sub-share-variance`). All 23 cases are automated; this catalog stands alone as the manual-execution script.

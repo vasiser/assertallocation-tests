@@ -58,9 +58,11 @@ CASES = [
         marks=BOUNDARY,
     ),
     pytest.param(
+        # 1% of $30 = $0.30 at $0.10/share = exactly 3 shares. Binary floats
+        # compute 0.3 / 0.1 = 2.9999999999999996, which would truncate to 2.
         [("A", 19, 20, "0.10"), ("B", 21, 20, "0.10"), ("C", 20, 20, 50), ("D", 20, 20, 60), ("E", 20, 20, 70)],
-        "1000",
-        [("A", "SELL", 100), ("B", "BUY", 100), ("C", "HOLD", 0), ("D", "HOLD", 0), ("E", "HOLD", 0)],
+        "30",
+        [("A", "SELL", 3), ("B", "BUY", 3), ("C", "HOLD", 0), ("D", "HOLD", 0), ("E", "HOLD", 0)],
         id="TC-08-penny-precision-price",
         marks=BOUNDARY,
     ),
