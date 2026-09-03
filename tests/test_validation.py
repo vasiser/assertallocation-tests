@@ -1,4 +1,4 @@
-"""Validation cases TC-13 .. TC-20: invalid input is rejected with a clear error.
+"""Validation cases TC-15 .. TC-23: invalid input is rejected with a clear error.
 
 Each pytest.param id matches a case in docs/manual_test_cases.md.
 """
@@ -20,55 +20,55 @@ CASES = [
         [("A", 25, 20, 100), ("B", 20, 20, 90)] + VALID_FILLER,
         "100000",
         "target percentages must sum to 100",
-        id="TC-13-targets-sum-not-100",
+        id="TC-15-targets-sum-not-100",
     ),
     pytest.param(
         [("A", 20, 25, 100), ("B", 20, 20, 90)] + VALID_FILLER,
         "100000",
         "current percentages must sum to 100",
-        id="TC-14-currents-sum-not-100",
+        id="TC-16-currents-sum-not-100",
     ),
     pytest.param(
         [("A", 20, 20, 0), ("B", 20, 20, 90)] + VALID_FILLER,
         "100000",
         "unit price must be positive",
-        id="TC-15-zero-unit-price",
+        id="TC-17-zero-unit-price",
     ),
     pytest.param(
         [("A", 20, 20, -90), ("B", 20, 20, 90)] + VALID_FILLER,
         "100000",
         "unit price must be positive",
-        id="TC-16-negative-unit-price",
+        id="TC-18-negative-unit-price",
     ),
     pytest.param(
         [("A", 20, 20, 100), ("B", 20, 20, 90)] + VALID_FILLER,
         "-100",
         "total assets cannot be negative",
-        id="TC-17-negative-total-assets",
+        id="TC-19-negative-total-assets",
     ),
     pytest.param(
         [("A", 20, 20, 100), ("A", 20, 20, 90)] + VALID_FILLER,
         "100000",
         "duplicate security symbol: A",
-        id="TC-18-duplicate-symbol",
+        id="TC-20-duplicate-symbol",
     ),
     pytest.param(
         [],
         "100000",
         "at least one holding",
-        id="TC-19-empty-holdings",
+        id="TC-21-empty-holdings",
     ),
     pytest.param(
         [("A", -20, 20, 100), ("B", 60, 20, 90)] + VALID_FILLER,
         "100000",
         "target percentage cannot be negative",
-        id="TC-20-negative-target-pct",
+        id="TC-22-negative-target-pct",
     ),
     pytest.param(
         [("A", 20, -20, 100), ("B", 20, 60, 90)] + VALID_FILLER,
         "100000",
         "current percentage cannot be negative",
-        id="TC-20b-negative-current-pct",
+        id="TC-23-negative-current-pct",
     ),
 ]
 

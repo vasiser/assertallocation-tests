@@ -7,12 +7,12 @@
 - A non-zero variance too small to fund one whole share results in HOLD 0.
 - Both target % and current % must each sum to exactly 100 ("100% is vested" = fully invested).
 
-**Common steps for every functional case (TC-01 … TC-12, TC-17b):**
+**Common steps for every functional case (TC-01 … TC-14):**
 1. Create an account with the test data below.
 2. Run the rebalance calculation.
 3. Verify one instruction is returned per security, in input order, with the expected action and share count.
 
-**Common steps for every validation case (TC-13 … TC-20):**
+**Common steps for every validation case (TC-15 … TC-23):**
 1. Attempt to run the rebalance calculation with the invalid test data below.
 2. Verify the input is rejected with a clear, descriptive error naming the failed rule.
 
@@ -30,17 +30,18 @@
 | TC-10 | New security — current 0%, target > 0% | Boundary/rounding | $100,000; one security not yet held | A 25/0 @125 · B 25/50 @500 · C 25/25 · D 25/25 | A **BUY 200** ($25,000/125 exact — new position opened) · B **SELL 50** · C, D HOLD 0 | ✔ `TC-10` |
 | TC-11 | Total assets smaller than any unit price | Boundary/rounding | $50 total; all prices > any trade value | A 10/20 @100 · B 30/20 @60 · C 30/30 · D 30/30 | All HOLD 0 — every variance value ($5) is below one share's price | ✔ `TC-11` |
 | TC-12 | Large account — no precision loss | Boundary/rounding | $10,000,000 total | A 10/20 @333 · B 30/20 @77 · C 30/30 · D 30/30 | A **SELL 3003** ($1,000,000/333 → 3003.003) · B **BUY 12987** ($1,000,000/77 → 12,987.01) · C, D HOLD 0 | ✔ `TC-12` |
-| TC-21 | Single security at 100% target | Boundary/rounding | Account holds exactly one security | A 100/100 @150, total $100,000 | One instruction: A HOLD 0 — a fully concentrated, on-target account needs no trades | ✔ `TC-21` |
-| TC-17b | Zero total assets | Boundary/rounding | Account exists with $0 | Total assets $0; IBM 20/10 @150 · MSFT 20/20 @90 · ORCL 20/30 @220 · AAPL 20/20 @450 · HD 20/20 @70 | Accepted (documented behavior): every trade value is $0 → all HOLD 0 | ✔ `TC-17b` |
-| TC-13 | Target percentages do not sum to 100 | Validation | — | 5 securities with targets 20/20/20/20/25 (sum 105), valid currents | Rejected: error states target percentages must sum to 100 | ✔ `TC-13` |
-| TC-14 | Current percentages do not sum to 100 | Validation | — | Valid targets (5 × 20); currents 10/20/30/20/25 (sum 105) | Rejected: error states current percentages must sum to 100 (fully-vested assumption) | ✔ `TC-14` |
-| TC-15 | Zero unit price | Validation | — | Sample account, but MSFT price = 0 | Rejected: error states unit price must be positive (division by zero guarded) | ✔ `TC-15` |
-| TC-16 | Negative unit price | Validation | — | Sample account, but MSFT price = −90 | Rejected: error states unit price must be positive | ✔ `TC-16` |
-| TC-17 | Negative total assets | Validation | — | Sample account holdings, total assets = −$100 | Rejected: error states total assets cannot be negative | ✔ `TC-17` |
-| TC-18 | Duplicate security symbol | Validation | — | Sample account with IBM listed twice | Rejected: error names the duplicated symbol | ✔ `TC-18` |
-| TC-19 | Empty holdings list | Validation | — | Account with $100,000 and no securities | Rejected: error states the account must contain at least one holding | ✔ `TC-19` |
-| TC-20 | Negative percentage | Validation | — | Sample account, but IBM target = −20 (and separately current = −10) | Rejected: error states percentages cannot be negative | ✔ `TC-20` |
+| TC-13 | Zero total assets | Boundary/rounding | Account exists with $0 | Total assets $0; IBM 20/10 @150 · MSFT 20/20 @90 · ORCL 20/30 @220 · AAPL 20/20 @450 · HD 20/20 @70 | Accepted (documented behavior): every trade value is $0 → all HOLD 0 | ✔ `TC-13` |
+| TC-14 | Single security at 100% target | Boundary/rounding | Account holds exactly one security | A 100/100 @150, total $100,000 | One instruction: A HOLD 0 — a fully concentrated, on-target account needs no trades | ✔ `TC-14` |
+| TC-15 | Target percentages do not sum to 100 | Validation | — | 5 securities with targets 20/20/20/20/25 (sum 105), valid currents | Rejected: error states target percentages must sum to 100 | ✔ `TC-15` |
+| TC-16 | Current percentages do not sum to 100 | Validation | — | Valid targets (5 × 20); currents 10/20/30/20/25 (sum 105) | Rejected: error states current percentages must sum to 100 (fully-vested assumption) | ✔ `TC-16` |
+| TC-17 | Zero unit price | Validation | — | Sample account, but MSFT price = 0 | Rejected: error states unit price must be positive (division by zero guarded) | ✔ `TC-17` |
+| TC-18 | Negative unit price | Validation | — | Sample account, but MSFT price = −90 | Rejected: error states unit price must be positive | ✔ `TC-18` |
+| TC-19 | Negative total assets | Validation | — | Sample account holdings, total assets = −$100 | Rejected: error states total assets cannot be negative | ✔ `TC-19` |
+| TC-20 | Duplicate security symbol | Validation | — | Sample account with IBM listed twice | Rejected: error names the duplicated symbol | ✔ `TC-20` |
+| TC-21 | Empty holdings list | Validation | — | Account with $100,000 and no securities | Rejected: error states the account must contain at least one holding | ✔ `TC-21` |
+| TC-22 | Negative target percentage | Validation | — | Sample account, but IBM target = −20 | Rejected: error states the target percentage cannot be negative | ✔ `TC-22` |
+| TC-23 | Negative current percentage | Validation | — | Sample account, but IBM current = −20 | Rejected: error states the current percentage cannot be negative | ✔ `TC-23` |
 
 **Notation:** `A 20/10 @150` = security A, target 20%, current 10%, unit price $150.
 
-**Traceability:** the `Automated` column gives the pytest test ID prefix; run `python -m pytest -v` and match IDs (e.g. `TC-05-sub-share-variance`). All 22 cases are automated; this catalog stands alone as the manual-execution script.
+**Traceability:** the `Automated` column gives the pytest test ID prefix; run `python -m pytest -v` and match IDs (e.g. `TC-05-sub-share-variance`). All 23 cases are automated; this catalog stands alone as the manual-execution script.

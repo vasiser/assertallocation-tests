@@ -1,4 +1,4 @@
-"""Data-driven functional cases TC-02 .. TC-12 and TC-17b.
+"""Data-driven functional cases TC-02 .. TC-14.
 
 Each pytest.param id matches a case in docs/manual_test_cases.md, where the
 test data and expected-value arithmetic are spelled out.
@@ -96,14 +96,14 @@ CASES = [
         [("IBM", 20, 10, 150), ("MSFT", 20, 20, 90), ("ORCL", 20, 30, 220), ("AAPL", 20, 20, 450), ("HD", 20, 20, 70)],
         "0",
         [("IBM", "HOLD", 0), ("MSFT", "HOLD", 0), ("ORCL", "HOLD", 0), ("AAPL", "HOLD", 0), ("HD", "HOLD", 0)],
-        id="TC-17b-zero-total-assets",
+        id="TC-13-zero-total-assets",
         marks=EDGE,
     ),
     pytest.param(
         [("A", 100, 100, 150)],
         "100000",
         [("A", "HOLD", 0)],
-        id="TC-21-single-security-at-target",
+        id="TC-14-single-security-at-target",
         marks=EDGE,
     ),
 ]

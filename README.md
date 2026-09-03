@@ -29,8 +29,8 @@ With whole shares, *exactly* zero variance is unreachable: after trading, IBM re
 | Path | Purpose |
 |------|---------|
 | `src/rebalancer/` | Reference implementation (system under test): `models.py` dataclasses, `rebalance.py` calculation + input validation, `__main__.py` demo |
-| `docs/manual_test_cases.md` | **Deliverable 1:** manual test case catalog — 21 cases (TC-01 … TC-20b) covering happy path, boundary/rounding, and validation |
-| `docs/assumptions.md` | Explicit assumptions + open questions for discussion |
+| [`docs/manual_test_cases.md`](docs/manual_test_cases.md) | **Deliverable 1:** manual test case catalog — 23 cases (TC-01 … TC-23) covering happy path, boundary/rounding, and validation |
+| [`docs/assumptions.md`](docs/assumptions.md) | Explicit assumptions + open questions for discussion |
 | `tests/` | **Deliverable 2:** automated pytest suite (35 tests) |
 
 ## Running
@@ -60,6 +60,18 @@ Viewing requires the Allure CLI (`scoop install allure`; needs Java, e.g. `scoop
 ## CI
 
 GitHub Actions (`.github/workflows/ci.yml`) runs the full suite on Python 3.12 for every push and pull request to `main`; it can also be triggered manually via **Actions → CI → Run workflow**. Each run uploads its Allure results as an `allure-results` build artifact (kept 14 days) — download it from the run's page in the Actions tab, unzip, and view with `allure serve <folder>`. The artifact is uploaded even when tests fail, which is when the report matters most.
+
+## Manual test cases
+
+The manual catalog lives in **[docs/manual_test_cases.md](docs/manual_test_cases.md)** — 23 cases in a classic QA table (ID, title, category, preconditions, test data, expected result), executable by hand without any tooling:
+
+| Category | Cases | Focus |
+|---|---|---|
+| Happy path | TC-01 … TC-04 | The assessment scenario, no-op accounts, exact division, mixed buys+sells |
+| Boundary / rounding | TC-05 … TC-14 | Sub-share variances, one-cent-short values, penny prices, liquidations, new positions, degenerate accounts |
+| Validation | TC-15 … TC-23 | Percentage sums, non-positive prices, negative values, duplicates, empty accounts |
+
+Every case is also automated: the catalog's `Automated` column names the pytest ID that verifies it (e.g. catalog row TC-05 ↔ pytest `TC-05-sub-share-variance` ↔ the same title in the Allure report), so manual and automated coverage never drift apart. The reasoning behind expected results is captured in [docs/assumptions.md](docs/assumptions.md).
 
 ## Test design
 
