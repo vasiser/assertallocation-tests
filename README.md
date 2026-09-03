@@ -1,7 +1,6 @@
 # Portfolio Rebalancer — QA Technical Assessment
 
-<!-- Replace <OWNER> with the GitHub account name once the repo is pushed -->
-![CI](https://github.com/<OWNER>/assertallocation-tests/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/vasiser/assertallocation-tests/actions/workflows/ci.yml/badge.svg)
 
 Manual and automated test cases for a portfolio **rebalancing application**, plus a small reference implementation used as the system under test.
 
